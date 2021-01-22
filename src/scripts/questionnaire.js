@@ -248,7 +248,7 @@ export default class Questionnaire extends H5P.EventDispatcher {
       }
 
       this.state.finished = true;
-      this.triggerXAPI('completed');
+      //this.triggerXAPI('completed');
     };
 
     /**
