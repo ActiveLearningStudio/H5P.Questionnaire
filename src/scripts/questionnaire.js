@@ -249,6 +249,17 @@ export default class Questionnaire extends H5P.EventDispatcher {
 
       this.state.finished = true;
       this.triggerXAPI('completed');
+      if(typeof this.parent !== 'undefined' && this.parent.contentData.metadata.contentType == "Column" ) {
+        //this.triggerXAPI('progressed');
+        console.log(this.parent.getTitle());
+        
+        const customProgressedEvent = this.parent.createXAPIEventTemplate('progressed');
+          if (customProgressedEvent.data.statement.object) {
+            customProgressedEvent.data.statement.object.definition['name'] = {'en-US': this.parent.getTitle()};
+            this.trigger(customProgressedEvent);
+          }
+      }
+      
     };
 
     /**
