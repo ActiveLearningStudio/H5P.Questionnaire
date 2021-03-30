@@ -84,7 +84,8 @@ export default class Questionnaire extends H5P.EventDispatcher {
         contentId: this.contentId,
         requiredField,
         index: index,
-        uiElements
+        uiElements,
+        parentObj: this,
       });
       questionContent.on('handledInteraction', () => {
         this.trigger('resize');
