@@ -29,14 +29,17 @@ export default class QuestionContent extends H5P.EventDispatcher {
     };
   }
 
-  constructor({progressBar, params, contentId, requiredField, index, uiElements}) {
+  constructor({progressBar, params, contentId, requiredField, index, uiElements, parentObj}) {
     super();
 
     this.progressBar = progressBar;
 
     this.questionnaireElement = document.createElement('div');
     this.questionnaireElement.className = 'h5p-questionnaire-element hide';
-    this.instance = H5P.newRunnable(params, contentId, H5P.jQuery(this.questionnaireElement), undefined, {parent: this});
+    // this.instance = H5P.newRunnable(params, contentId, H5P.jQuery(this.questionnaireElement), undefined, {parent: this});
+    // We redefined this because other H5Ps might expect a proper H5P parent relationship tree and the previous line would
+    // break the relationship.
+    this.instance = H5P.newRunnable(params, contentId, H5P.jQuery(this.questionnaireElement), undefined, {parent: parentObj});
     this.requiredField = requiredField;
     this.answered = params.userDatas && params.userDatas.state && params.userDatas.state.length;
 
