@@ -29,6 +29,8 @@ export default class Questionnaire extends H5P.EventDispatcher {
       currentIndex: 0
     };
 
+    this.user_responses = [];
+
     uiElements = H5P.jQuery.extend(true, {
       buttonLabels: {
         prevLabel: 'Back',
@@ -91,6 +93,7 @@ export default class Questionnaire extends H5P.EventDispatcher {
         this.trigger('resize');
         this.requiredMessage.trigger('hideMessage');
         this.triggerXAPI('interacted');
+        
       });
 
       questionContent.on('allow-finish-changed', () => {
@@ -134,6 +137,7 @@ export default class Questionnaire extends H5P.EventDispatcher {
 
       if (this.state.finished) {
         // Resume functionality
+        this.trigger('showSummary');
         successScreenOptions.enableSuccessScreen ? this.showSuccessScreen() : this.showSubmitScreen();
       }
       else {
@@ -154,7 +158,8 @@ export default class Questionnaire extends H5P.EventDispatcher {
         title: uiElements.submitScreenTitle,
         subtitle: uiElements.submitScreenSubtitle,
         backLabel: uiElements.buttonLabels.prevLabel,
-        submitLabel: uiElements.buttonLabels.submitLabel
+        submitLabel: uiElements.buttonLabels.submitLabel,
+        summaryHtml: ''
       });
 
       this.submitScreen.on('submit', this.handleSubmit.bind(this));
@@ -163,10 +168,28 @@ export default class Questionnaire extends H5P.EventDispatcher {
         this.submitScreen.hide();
         this.hideQuestion(false);
         this.trigger('resize');
+        
       });
 
       return this.submitScreen;
     };
+
+    this.showSummary = function () {
+    
+      var table_content = '<tbody>';
+      
+      questionnaireElements.forEach(({requiredField, library}, index) => {
+      
+      table_content += '<tr>';
+      table_content += '<td>'+library.params.question+'</td>';
+      
+      table_content += '<td>'+library.userDatas.state+'</td>';
+      table_content += '</tr>';
+    });
+    
+    var summary_html = '<div class="custom-summary-section"><div class="h5p-summary-table-pages"><table class="h5p-score-table-custom" style="min-height:100px;width:50%"><thead><tr><th>Question</th><th>Response</th></tr></thead>'+table_content+'</table></div></div>';
+    H5P.jQuery('.h5p-questionnaire-submit-screen-summary').html(summary_html);
+    }
 
     /**
      * Toggle question visibility
@@ -222,6 +245,8 @@ export default class Questionnaire extends H5P.EventDispatcher {
       this.hideQuestion(true);
       this.submitScreen.show();
       this.trigger('resize');
+      //this.showSummary();
+      
     };
 
     /**
@@ -232,6 +257,7 @@ export default class Questionnaire extends H5P.EventDispatcher {
       this.submitScreen.hide();
       this.successScreen.show();
       this.trigger('resize');
+
     };
 
     /**
@@ -241,6 +267,9 @@ export default class Questionnaire extends H5P.EventDispatcher {
      * that there is no success screen
      */
     this.handleSubmit = function () {
+      if( typeof this.parent == 'undefined') {
+        this.triggerXAPI('submitted-curriki');
+      }
       if (successScreenOptions.enableSuccessScreen) {
         this.showSuccessScreen();
       }
@@ -250,9 +279,8 @@ export default class Questionnaire extends H5P.EventDispatcher {
 
       this.state.finished = true;
       this.triggerXAPI('completed');
+      
       if(typeof this.parent !== 'undefined' && this.parent.contentData.metadata.contentType == "Column" ) {
-        //this.triggerXAPI('progressed');
-        console.log(this.parent.getTitle());
         
         const customProgressedEvent = this.parent.createXAPIEventTemplate('progressed');
           if (customProgressedEvent.data.statement.object) {
