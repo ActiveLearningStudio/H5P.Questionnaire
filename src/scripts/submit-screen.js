@@ -3,7 +3,7 @@ import './styles/submit-screen.css';
 import Utils from './utils';
 
 export default class SubmitScreen extends H5P.EventDispatcher {
-  constructor({title, subtitle, backLabel, submitLabel, summaryHtml}) {
+  constructor({title, subtitle, backLabel, submitLabel, doNotShowSubmitButton}) {
     super();
 
     this.wrapper = Utils.createDiv({
@@ -31,7 +31,9 @@ export default class SubmitScreen extends H5P.EventDispatcher {
 
     // Add buttons
     this.wrapper.appendChild(Utils.createButton(backLabel, 'previous', this));
-    this.wrapper.appendChild(Utils.createButton(submitLabel, 'submit', this));
+    if(!doNotShowSubmitButton) {
+      this.wrapper.appendChild(Utils.createButton(submitLabel, 'submit', this));
+    }
     //this.wrapper.appendChild(Utils.createButton('View Summary', 'view_summary', this));
 
     /**

@@ -20,8 +20,9 @@ export default class Questionnaire extends H5P.EventDispatcher {
    * @param contentId
    * @param contentData
    */
-  constructor({questionnaireElements = [], successScreenOptions = {}, uiElements = {}}, contentId = null, contentData = {}) {
+  constructor({questionnaireElements = [], successScreenOptions = {}, uiElements = {}, currikisettings = {}}, contentId = null, contentData = {}) {
     super();
+    
 
     this.contentId = contentId;
     this.state = {
@@ -35,8 +36,13 @@ export default class Questionnaire extends H5P.EventDispatcher {
       buttonLabels: {
         prevLabel: 'Back',
         nextLabel: 'Next',
-        submitLabel: 'Submit',
         continueLabel: 'Continue'
+      },
+      currikisettings: {
+        disableSubmitButton: false,
+        currikil10n: {
+          submitLabel: "Submit"
+        }
       },
       accessibility: {
         requiredTextExitLabel: "Close error message",
@@ -45,8 +51,21 @@ export default class Questionnaire extends H5P.EventDispatcher {
       requiredMessage: 'This question requires an answer',
       requiredText: 'required',
       submitScreenTitle: 'You successfully answered all of the questions',
-      submitScreenSubtitle: 'Click below to submit your answers'
+      submitScreenSubtitle: 'Click below to submit your answers',
+      
     }, uiElements);
+
+    currikisettings = H5P.jQuery.extend(true, {
+      
+      
+        disableSubmitButton: false,
+        currikil10n: {
+          submitLabel: "Submit"
+        }
+      
+      
+      
+    }, currikisettings);
 
     /**
      * Instantiate all questions
@@ -154,12 +173,15 @@ export default class Questionnaire extends H5P.EventDispatcher {
      * @return {SubmitScreen}
      */
     this.createSubmitScreen = function () {
+      console.log(currikisettings.currikil10n.submitLabel);
+      console.log(currikisettings);
+      
       this.submitScreen = new SubmitScreen({
         title: uiElements.submitScreenTitle,
         subtitle: uiElements.submitScreenSubtitle,
         backLabel: uiElements.buttonLabels.prevLabel,
-        submitLabel: uiElements.buttonLabels.submitLabel,
-        summaryHtml: ''
+        submitLabel: currikisettings.currikil10n.submitLabel,
+        doNotShowSubmitButton: currikisettings.disableSubmitButton
       });
 
       this.submitScreen.on('submit', this.handleSubmit.bind(this));
