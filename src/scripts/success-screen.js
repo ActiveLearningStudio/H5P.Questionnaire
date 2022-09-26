@@ -48,6 +48,13 @@ export default class SuccessScreen extends H5P.EventDispatcher {
       this.wrapper.classList.remove('hide');
       this.wrapper.focus();
     };
+
+    /**
+     * Hide submit screen
+     */
+    this.hide = function () {
+      this.wrapper.classList.add('hide');
+    };
   }
 
   /**

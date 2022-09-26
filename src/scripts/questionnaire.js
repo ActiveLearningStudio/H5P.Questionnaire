@@ -499,6 +499,23 @@ export default class Questionnaire extends H5P.EventDispatcher {
       });
     };
 
+    this.resetTask = function () {
+      this.state.currentIndex = 0;
+      this.state.finished = false;
+      this.state.questionnaireElements.forEach((question) => {
+        question.hide(true);
+        question.answered = false;
+        const instance = question.instance;
+        if (instance.resetTask) {
+          instance.resetTask();
+        }
+      });
+      this.progressBar.hide(false);
+      this.footer.hide(false);
+      this.submitScreen.hide();
+      this.successScreen.hide();
+      this.move(this.state.currentIndex);
+    };
     this.setPreviousState();
     const questionnaireWrapper = this.createQuestionnaire();
   }
