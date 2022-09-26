@@ -290,6 +290,7 @@ export default class Questionnaire extends H5P.EventDispatcher {
      */
     this.handleSubmit = function () {
       if( typeof this.parent == 'undefined') {
+        this.triggerXAPI('completed');
         this.triggerXAPI('submitted-curriki');
       }
       if (successScreenOptions.enableSuccessScreen) {
@@ -300,7 +301,7 @@ export default class Questionnaire extends H5P.EventDispatcher {
       }
 
       this.state.finished = true;
-      this.triggerXAPI('completed');
+
       
       if(typeof this.parent !== 'undefined' && this.parent.contentData.metadata.contentType == "Column" ) {
         
@@ -516,6 +517,16 @@ export default class Questionnaire extends H5P.EventDispatcher {
       this.successScreen.hide();
       this.move(this.state.currentIndex);
     };
+
+    /**
+     * Get title, e.g. for xAPI when Column is subcontent.
+     *
+     * @return {string} Title.
+     */
+    this.getTitle = function () {
+      return H5P.createTitle((contentData && contentData.metadata && contentData.metadata.title) ? contentData.metadata.title : 'Questionnaire');
+    };
+
     this.setPreviousState();
     const questionnaireWrapper = this.createQuestionnaire();
   }
